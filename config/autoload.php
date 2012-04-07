@@ -1,2 +1,2 @@
 <?php
-$autoload['helpers'] = array('pherl');
+$autoload['helper'] = array('pherl');
