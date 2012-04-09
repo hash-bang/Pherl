@@ -26,4 +26,4 @@ Quickly initalize arrays by providing a single string. The array elements are de
 
 TODO
 ====
-* Regular expression functionality
+* Test & document regular expression functionality
