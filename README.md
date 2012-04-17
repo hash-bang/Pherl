@@ -124,46 +124,46 @@ This is included because sometimes examples are more helpful than API waffle.
 	<tr>
 		<th>Extraction</th>
 		<td>
-			```perl
-			$_ = 'foo bar baz';
-			($one, $two, $three) =~ m/(.*) .{3} .../;
-			```
+<pre>
+$_ = 'foo bar baz';
+($one, $two, $three) =~ m/(.*) .{3} .../;
+</pre>
 		</td>
 		<td>
-			```php
-			$haystack = 'foo bar baz';
-			list($one, $two, $three) = re('m/(.*) .{3} .../', $haystack);
-			```
+<pre>
+$haystack = 'foo bar baz';
+list($one, $two, $three) = re('m/(.*) .{3} .../', $haystack);
+</pre>
 		</td>
 	</tr>
 	<tr>
 		<th>Subsitution</th>
 		<td>
-			```perl
-			$_ = 'foo bar baz';
-			$new = s/foo/QUZ/;
-			```
+<pre>
+$_ = 'foo bar baz';
+$new = s/foo/QUZ/;
+</pre>
 		</td>
 		<td>
-			```php
-			$haystack = 'foo bar baz';
-			$new = re('s/foo/QUZ/', $haystack);
-			```
+<pre>
+$haystack = 'foo bar baz';
+$new = re('s/foo/QUZ/', $haystack);
+</pre>
 		</td>
 	</tr>
 	<tr>
 		<th>Translation</th>
 		<td>
-			```perl
-			$_ = 'foo bar baz';
-			$new = tr/a-z/A-Z/;
-			```
+<pre>
+$_ = 'foo bar baz';
+$new = tr/a-z/A-Z/;
+</pre>
 		</td>
 		<td>
-			```php
-			$haystack = 'foo bar baz';
-			$new = re('tr/a-z/A-Z/', $haystack);
-			```
+<pre>
+$haystack = 'foo bar baz';
+$new = re('tr/a-z/A-Z/', $haystack);
+</pre>
 		</td>
 	</tr>
 </table>
