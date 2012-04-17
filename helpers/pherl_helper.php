@@ -20,7 +20,7 @@ if (!function_exists('re')) {
 * e.g.
 *
 *	// Extract a match from a RegExp
-*	$val = re('/(some match)dasdas/', $subject); // Sets $val to the matched str
+*	list($val) = re('/(some match)dasdas/', $subject); // Sets $val to the matched str
 *
 *	// Do something only if a RegExp does NOT match
 *	if (re('!/(some match)/', $subject)) {} // Returns boolean as to whether the match is present (quicker than above)
@@ -31,7 +31,7 @@ if (!function_exists('re')) {
 *	// Translation
 *	$val = re('tr/a-z/A-Z/', $subject) // TR(anslate) upper-case to lower-case
 *
-*	list($name,$age,$height) = re('m/([a-z]+) is ([0-9]{1,3}) years old and is ([0-9\.]+) feet height',$instr); // Nice extraction
+*	list($name, $age, $height) = re('m/([a-z]+) is ([0-9]+) years old and is ([0-9\.]+) feet height',$instr); // Nice extraction
 *
 * Operators (characters that go before the expression):
 * * m (or nothing) - Returns all matching elements in a array (if multiple matches [i.e. \1\2\3 etc.] in an array of arrays)
@@ -44,42 +44,48 @@ if (!function_exists('re')) {
 * * g - Subsitute globally - i.e. dont just replace in an s/// operation once
 * * s - Treat the incomming target as a string. Change "." to match any character (even a newline)
 * * m - Treat string as multiple lines. Change "^" and "$" from matching the start or end of the string to matching the start or end of any line anywhere within the string.
-* * @ - Always return the result as an array even if there is only one return (e.g. $a = re('/f(.)/@') would return $a as an array)
+* * 1 - By default RE() will return an array if a capture operation is detected. If this modifier is specified only the first capture result will be returned as a string. This means that you can slurp the match directly into a variable without having to use list()
 *
 * Flags:
-* * RE_ALWAYSARRAY - Ignore the single return (when doing simple matches) and ALWAYS return an array-of-arrays
-* * RE_FULLSTR - Include the full matching string as the first element of the matches
-* * RE_CROP - When doing a match across an array should we remove all non-greping elements? (Default: Just return a blank array). Overrides RE_FULLSTR
+* Flags are used to force a modifier. These are usually determined from the above modifier list
+* * RE_FIRSTONLY - Equivelent to the '1' modifier.
+* * RE_PENDFULL - Include the full matching string as the first element of the output array
 */
-define('RE_ALWAYSARRAY',1);
-define('RE_FULLSTR',2);
+define('RE_FIRSTONLY',1);
+define('RE_PENDFULL',2);
 define('RE_CROP',4);
 function re($exp, $target, $flags = 0) {
 	preg_match_all('/^(m|s|tr|\!)?([^a-z0-9])/', $exp, $function, PREG_SET_ORDER); // Determine what type of operation to do & the split char
 	$splitter = $function[0][2];
 	$splitterq = preg_quote($splitter, $splitter);
-	$type = $function[0][1];
-	$exp = ltrim($exp, $type); // Remove the leading operation character (PHP PREG lib doesnt like it)
+	$operation = $function[0][1];
+	$exp = ltrim($exp, $operation); // Remove the leading operation character (PHP PREG lib doesnt like it)
 
-	preg_match("/{$splitterq}([igsm@]*)$/i", $exp, $mutators);
-	$mutators = $mutators[1];
-	if (strpos($mutators, '@') !== FALSE) {
-		$flags = $flags & RE_ALWAYSARRAY;
+	preg_match("/{$splitterq}([igsm1]*)$/i", $exp, $mutators);
+	$mutators = isset($mutators[1]) ? $mutators[1] : '';
+	if (strpos($mutators, '1') !== FALSE) {
+		$flags = $flags & RE_FIRSTONLY;
+		$mutators = strtr($mutators, array('1' => '')); // Remove special mutator from stream
+		$exp = substr($exp, 0, strlen($exp) - (strlen($mutators) + 1));
 	}
 	
-	switch ($type) { // What exactly are we doing?
+	switch ($operation) { // What operation are we doing
 		case 's': // Substitution
-			preg_match_all("/^$splitterq(.*)$splitterq(.*)[$splitterq]$/i", $exp, $matches,PREG_SET_ORDER);
+			if (!preg_match_all("/^$splitterq(.*)$splitterq(.*)$splitterq/", $exp, $matches, PREG_SET_ORDER)) {
+				if (!preg_match_all("/^$splitterq(.*)$splitterq(.*)$splitterq/", $exp. $splitter, $matches,PREG_SET_ORDER)) { // Mangled re-exp - maybe the user was being lazy and left off the last splitter char?
+					trigger_error("Mangled regex in subsitution RE() operation - $exp", E_USER_ERROR);
+					return $target;
+				}
+			}
 			if (is_array($target)) {
 				$out = array();
 				foreach ($target as $thistarget)
 					$out[] = preg_replace("$splitter{$matches[0][1]}$splitter", $matches[0][2], $target);
 				return $out;
 			} else
-				return preg_replace("$splitter{$matches[0][1]}$splitter", $matches[0][2], $target);
-			print_r($matches);
+				return preg_replace("$splitter{$matches[0][1]}$splitter", $matches[0][2], $target, (strpos($mutators, 'g') === FALSE) ? 1 : -1);
 			break;
-		case 'tr': // Translation FIXME: Does this work with tr/a-z/A-Z/
+		case 'tr': // Translation - FIXME: Dont think this works properly. Its using strtr rather than preg
 			preg_match_all("/^$splitterq(.*)$splitterq(.*)[$splitterq]$/i", $exp, $matches, PREG_SET_ORDER);
 			if (is_array($target)) {
 				$out = array();
@@ -90,81 +96,42 @@ function re($exp, $target, $flags = 0) {
 				return strtr($target, $matches[0][1], $matches[0][2]);
 			break;
 
-		case '!': // Boolean match
-			if (is_array($target)) {
-				foreach ($target as $thistarget) {
-					if (preg_match($exp, $thistarget) > 0)
-						return true;
-				}
-				return false;
-			} else
-				return (preg_match($exp, $target) > 0);
-			break;
-
+		case '!':
 		case 'm':
 		default: // Match
+			if (!preg_match("/^$splitterq(.*)$splitterq/", $exp)) { // Looks like a valid expression?
+				if (!preg_match("/^$splitterq(.*)$splitterq/", $exp . $splitter)) { // Mangled re-exp - maybe the user was being lazy and left off the last splitter char?
+					trigger_error("Mangled regex in match RE() operation - $exp", E_USER_ERROR);
+					return $operation != '!' ? FALSE : TRUE;
+				} else
+					$exp .= $splitter;
+			}
 			if (is_array($target)) {
 				$out = array();
 				foreach ($target as $thistarget) {
 					preg_match_all($exp, $thistarget, $matches, PREG_SET_ORDER);
-					if (($flags & RE_FULLSTR) == RE_FULLSTR) // Have to go though and put the thing in
+					if (($flags & RE_PENDFULL) == RE_PENDFULL) // Have to go though and put the thing in
 						foreach ($matches as $index => $match)
 							array_unshift($matches[$index], $thistarget);
 					if (isset($matches[0]))
 						$out[] = $matches[0];
-					else if (($flags & RE_CROP) != RE_CROP) { // Nothing found in this element (and we're not in CROP mode)
-						if (($flags & RE_FULLSTR) == RE_FULLSTR)
-							$out[] = array($thistarget);
-						else
-							$out[] = array();
-					}
 				}
 				return $out;
 			} else {
-				preg_match_all($exp, $target, $matches, PREG_SET_ORDER);
-				if ((($flags & RE_ALWAYSARRAY) == RE_ALWAYSARRAY) || (count($matches) > 1)) { // If its multiple groups return the default array-of-arrays
-					if (($flags & RE_FULLSTR) != RE_FULLSTR) // Have to go though and remove the damned thing
-						foreach ($matches as $index => $match)
-							array_shift($matches[$index]);
-					return $matches;
-				} else { // If its just a single match
-					if (count($matches) > 0) {
-						if (($flags & RE_FULLSTR) != RE_FULLSTR) // Clip the damned first element
-							array_shift($matches[0]);
-						return $matches[0]; // Just return the single match
-					}
+				if (!preg_match('/[^\\\\]\(/', $exp)) { // Not capturing - only testing
+					if ($operation == '!')
+						return (bool) !preg_match($exp, $target);
+					return (bool) preg_match($exp, $target);
+				} else { // Capturing - return array
+					$out = array();
+					preg_match_all($exp, $target, $matches, PREG_SET_ORDER);
+					if (($flags & RE_FIRSTONLY) != RE_FIRSTONLY) // Only return first match
+						return isset($matches[0][1]) ? $matches[0][1]: FALSE;
+					foreach ($matches as $match)
+						$out[] = $match[1];	
+					return $out;
 				}
 			}
 	}
 }
 }
-
-/*
-// Test cases:
-function testre($title, $expression, $target, $expected) {
-	$result = re($expression, $target, $expected);
-	if ($result == $expected) {
-		echo "Test '$title' [$expression] - OK\n";
-	} else {
-		echo "Test '$title' [$expression] - FAILED\n";
-		echo "Expected: [" . print_r($expected, 1) . "]\n";
-		echo "Got: [" . print_r($result, 1) . "]\n";
-		echo "\n";
-	}
-}
-testre('Boolean match', 'm/foo/@i','foo bar baz', 1);
-die();
-testre('Boolean match', 'm/foo/','foo bar baz', 1);
-testre('Boolean match (implied function)', '/foo/','foo bar baz', 1);
-testre('Boolean match (case insensitive)', 'm/fOo/i','foO bar baz', TRUE);
-testre('Single capture', 'm/(fo.)/','foo bar baz', 'foo');
-testre('Single capture as array', 'm/(fo.)/@','foo bar baz', array('foo'));
-testre('Multiple capture', 'm/(ba.)/','foo bar baz', qw('bar baz'));
-
-testre('Single subsitution', 's/ba./QUZ/', 'foo bar baz', 'foo QUZ baz');
-testre('Multiple subsitution', 's/ba./QUZ/g', 'foo bar baz', 'foo QUZ QUZ');
-testre('Single subsitution (un-closed splitter)', 's/ba./QUZ', 'foo bar baz', 'foo QUZ baz');
-
-testre('Translation of a single char', 'tr/a/A/','foo bar baz', 'foo bAr bAz');
-testre('Translation to upper case', 'tr/a-z/A-Z/','foo bar baz', 'FOO BAR BAZ');
-*/
