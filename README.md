@@ -9,8 +9,8 @@ It contains a number of convenience functions cheerfully ripped from the Perl pr
 * __RE__ - Perl like regular expression syntax for PHP
 
 
-Quick array initalizers - qw
-============================
+Quick array initalizer - qw
+===========================
 Quickly initalize arrays by providing a single string. The array elements are determined by any whitespace.
 
 	// Create an array with three elements (foo, bar and baz)
@@ -27,12 +27,12 @@ Quickly initalize arrays by providing a single string. The array elements are de
 
 Regular expressions - re
 ========================
-The Re() function provides all Regular Expression functionality in a Perl like way.
+The Re() function provides Regular Expression functionality in a Perl like way.
 
 
 Simple matching
 ---------------
-Determine if the string 'needle' exists in the variable $haystack:
+Determine if the string 'needle' exists in $haystack:
 
 	if (re('/needle/', $haystack)) {
 		// Do something
@@ -41,7 +41,6 @@ Determine if the string 'needle' exists in the variable $haystack:
 
 Simple extraction
 -----------------
-
 Extract a match from an input string
 
 	$haystack = 'foo bar baz quz quuz';
@@ -68,11 +67,10 @@ This is the same syntax as Simple Extraction. When multiple elements are found R
 
 Multiple extraction into variables
 ----------------------------------
-
 You can use PHP's list() function to automatically cram the output of RE into a series of variables.
 
 	$haystack = 'Matt is 28 years old';
-	list($name, $age) = re('/^(.+) is ([0-9]+) years old$/', $haystack);
+	list($name, $age) = re('/^(.+?) is ([0-9]+) years old$/', $haystack);
 
 
 Simple substitution and replacement
@@ -90,13 +88,13 @@ By default only the first matching element is replaced. If you want to replace a
 	echo $output; // Output: 'foo BAR baz foo BAR baz'
 
 
-Substitution back references
-----------------------------
+Substitution with back-references
+---------------------------------
 Replace the words 'bar' and 'baz' into 'FOUND-r' and 'FOUND-z':
 
 	$haystack = 'foo bar baz';
 	$output = re('s/(ba.)/FOUND-\1/', $haystack);
-	echo $output; // Output: 'foo FOUND-r FOUND-z'
+	echo $output; // Output: 'foo FOUND-bar FOUND-baz'
 
 \1 and onwards is automatically set to the captured item.
 
@@ -119,7 +117,7 @@ This is included because sometimes examples are more helpful than API waffle.
 	<tr>
 		<th>Example</th>
 		<th>Perl</th>
-		<th>PHP + this module</th>
+		<th>PHP + Pherl</th>
 	</tr>
 	<tr>
 		<th>Extraction</th>
@@ -173,3 +171,4 @@ TODO
 ====
 
 * Translation (tr//) not working correctly
+* Support for callback functions for substitutions
