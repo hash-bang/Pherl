@@ -13,6 +13,38 @@ function qw($string) {
 }
 }
 
+
+if (!function_exists('keyval')) {
+/**
+* Quickly reorder arrays by picking the key and value arrangement from an array of arrays
+* e.g.
+*	$in = array(
+*		array(
+*			'name' => 'Earl',
+*			'age' => 35,
+*		),
+*		array(
+*			'name' => 'John',
+*			'age' => 24,
+*		),
+*	);
+*
+*	$a = keyval('name', 'age', $in); // $a is now array('Earl' => 35, 'John' => 24)
+*
+* @param string $key The key to extract from the array of arrays
+* @param string $val The value to extract from the array of arrays
+* @return array A key/value associative array with the $key and $val extracted
+*/
+function keyval($key, $val, $array) {
+	$out = array();
+	foreach ($array as $item)
+		if (isset($item[$key]) && isset($item[$val]))
+			$out[$item[$key]] = $item[$val];
+	return $out;
+}
+}
+
+
 if (!function_exists('pick')) {
 /**
 * Pick a random element from an array
@@ -27,6 +59,7 @@ function pick($arr) {
 	return $arr[$i];
 }
 }
+
 
 if (!function_exists('re')) {
 /**
