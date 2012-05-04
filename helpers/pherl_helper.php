@@ -13,6 +13,21 @@ function qw($string) {
 }
 }
 
+if (!function_exists('pick')) {
+/**
+* Pick a random element from an array
+* e.g.
+* 	$a = pick(qw('foo bar baz')) // Output: foo, bar or baz (randomly)
+* @param array $arr The array to pick from
+* @return mixed A single random element of the array
+*/
+function pick($arr) {
+
+	$i = rand(0,count($arr)-1);
+	return $arr[$i];
+}
+}
+
 if (!function_exists('re')) {
 /**
 * A single function 're' which can run very complex RegExps

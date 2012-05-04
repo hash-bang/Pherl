@@ -6,6 +6,7 @@ This Spark module is intended to provide simple Perl like functionality for PHP 
 It contains a number of convenience functions cheerfully ripped from the Perl programming languages which make coding a lot easier for the terminally impatient.
 
 * __QW__ - Quick array initalization via simple strings
+* __PICK__ - Randomly pick elements from an array
 * __RE__ - Perl like regular expression syntax for PHP
 
 
@@ -23,6 +24,13 @@ Quickly initalize arrays by providing a single string. The array elements are de
 		bar
 		baz
 	');
+
+
+Pick random elements from an array - pick
+=========================================
+Choose a single random element from an array.
+
+	$item = pick(qw('foo bar baz')); // Chooses either foo, bar or baz
 
 
 Regular expressions - re
