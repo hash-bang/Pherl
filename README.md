@@ -8,6 +8,7 @@ It contains a number of convenience functions cheerfully ripped from the Perl pr
 * __QW__ - Quick array initalization via simple strings
 * __KEYVAL__ - Extract a key=>val relationship from an array-of-arrays
 * __PICK__ - Randomly pick elements from an array
+* __EVALSTR__ - Process a string similar to how PHP expands variables
 * __RE__ - Perl like regular expression syntax for PHP
 
 
@@ -50,6 +51,15 @@ Pick random elements from an array - pick
 Choose a single random element from an array.
 
 	$item = pick(qw('foo bar baz')); // Chooses either foo, bar or baz
+
+
+Expand PHP style strings - evalstr
+==================================
+Return the computed result of a string using local variables.
+
+	echo evalstr('Hello $name', array('name' => 'Matt')); // Returns Matt
+
+	echo evalstr('Hello {$user['name']}', array('user' => $this->GetAUser(123))); // Returns the 'user' objects 'GetAUser' methods 'name' property
 
 
 Regular expressions - re

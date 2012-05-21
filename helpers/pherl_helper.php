@@ -61,6 +61,22 @@ function pick($arr) {
 }
 
 
+if (!function_exists('evalstr')) {
+/**
+* Returns a version of a string as if it were given in double speach marks
+* e.g. evalstr("Hello {$this->field}") becomes "Hello name" (if $this->name is 'name')
+* @param string $text The text to process
+* @param array $locals Local variables to provide to the eval'd string
+* @return string The result of the processed string
+*/
+function evalstr($text, $locals = null) {
+	if ($locals)
+		extract($locals);
+	return eval($s = "return \"" . strtr($text, array('"' => '\'')) . "\";"); // Vomit indusing hack to Replace " with \" in eval string
+}
+}
+
+
 if (!function_exists('re')) {
 /**
 * A single function 're' which can run very complex RegExps
