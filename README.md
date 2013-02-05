@@ -8,12 +8,13 @@ It contains a number of convenience functions cheerfully ripped from the Perl pr
 * __QW__ - Quick array initalization via simple strings
 * __KEYVAL__ - Extract a key=>val relationship from an array-of-arrays
 * __PICK__ - Randomly pick elements from an array
+* __ENCASE__ - Quickly add a prefix / suffix to an array of strings
 * __EVALSTR__ - Process a string similar to how PHP expands variables
 * __RE__ - Perl like regular expression syntax for PHP
 
 
-Quick array initalizer - qw
-===========================
+`qw` - Quick array initalizer
+=============================
 Quickly initalize arrays by providing a single string. The array elements are determined by any whitespace.
 
 	// Create an array with three elements (foo, bar and baz)
@@ -28,8 +29,8 @@ Quickly initalize arrays by providing a single string. The array elements are de
 	');
 
 
-Create a key/val relationship from an array-of-arrays - keyval
-==============================================================
+`keyval` - Create a key/val relationship from an array-of-arrays
+================================================================
 Quickly reorder arrays by picking the key and value arrangement from an array of arrays
 
 	$in = array(
@@ -48,15 +49,22 @@ Quickly reorder arrays by picking the key and value arrangement from an array of
 Specifying 'OFFSET' as the key uses the offset of the index within the array-of-arrays.
 
 
-Pick random elements from an array - pick
-=========================================
+`pick` - Pick random elements from an array
+===========================================
 Choose a single random element from an array.
 
 	$item = pick(qw('foo bar baz')); // Chooses either foo, bar or baz
 
 
-Expand PHP style strings - evalstr
-==================================
+`encase` - Add a prefix / suffix to an array of strings
+=======================================================
+The `encase()` function allows you to quickly enclose each string in an array with a given prefix and suffix.
+
+	$tags = encase(qw('a img hr', '<', '>')); // Returns: <a>, <img>, <hr>
+
+
+`evalstr` - Expand PHP style strings
+====================================
 Return the computed result of a string using local variables.
 
 	echo evalstr('Hello $name', array('name' => 'Matt')); // Returns Matt
@@ -64,8 +72,8 @@ Return the computed result of a string using local variables.
 	echo evalstr('Hello {$user['name']}', array('user' => $this->GetAUser(123))); // Returns the 'user' objects 'GetAUser' methods 'name' property
 
 
-Regular expressions - re
-========================
+`re` - Perl like Regular Expressions
+====================================
 The Re() function provides Regular Expression functionality in a Perl like way.
 
 

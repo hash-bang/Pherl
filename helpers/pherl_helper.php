@@ -63,6 +63,29 @@ function pick($arr) {
 }
 
 
+if (!function_exists('encase')) {
+/**
+* Encase all elements of an array with a given prefix and suffix
+* e.g.
+* 	$a = encase(qw('foo bar baz'), '"', '"') // $a = "foo", "bar" or "baz" (as in a literal string with the words between '"' characters)
+* 	$b = encase(qw('foo bar baz'), '<', '>') // $a = <foo>, <bar>, <baz>
+* 	$c = encase(qw('foo bar baz')) // $a = "foo", "bar", "baz"
+* @param array $arr The array to iterate and apply the elemnts to
+* @param string $prefix The prefix string to add to all elements of $arr
+* @param string $suffix The suffix string to add to all ements of $arr. If this is null its value is copied from $prefix
+* @return array $arr with all elements enclosed between the $prefix and $suffix characters
+*/
+function encase($arr, $prefix = '"', $suffix = null) {
+	if ($suffix === null)
+		$suffix = $prefix;
+	$out = array();
+	foreach ($arr as $item)
+		$out[] = $prefix . $item . $suffix;
+	return $out;
+}
+}
+
+
 if (!function_exists('evalstr')) {
 /**
 * Returns a version of a string as if it were given in double speach marks
