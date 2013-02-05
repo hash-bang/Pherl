@@ -45,6 +45,8 @@ Quickly reorder arrays by picking the key and value arrangement from an array of
 	
 	$a = keyval('name', 'age', $in); // $a is now array('Earl' => 35, 'John' => 24)
 
+Specifying 'OFFSET' as the key uses the offset of the index within the array-of-arrays.
+
 
 Pick random elements from an array - pick
 =========================================
