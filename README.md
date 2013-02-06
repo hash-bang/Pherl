@@ -62,6 +62,8 @@ The `encase()` function allows you to quickly enclose each string in an array wi
 
 	$tags = encase(qw('a img hr', '<', '>')); // Returns: <a>, <img>, <hr>
 
+The meta string 'OFFSET' will be replaced with the key of the array being iterated over.
+
 
 `evalstr` - Expand PHP style strings
 ====================================

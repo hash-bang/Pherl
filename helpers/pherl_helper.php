@@ -71,7 +71,7 @@ if (!function_exists('encase')) {
 * 	$b = encase(qw('foo bar baz'), '<', '>') // $a = <foo>, <bar>, <baz>
 * 	$c = encase(qw('foo bar baz')) // $a = "foo", "bar", "baz"
 * @param array $arr The array to iterate and apply the elemnts to
-* @param string $prefix The prefix string to add to all elements of $arr
+* @param string $prefix The prefix string to add to all elements of $arr. You can use the meta string OFFSET to indicate the array offset
 * @param string $suffix The suffix string to add to all ements of $arr. If this is null its value is copied from $prefix
 * @return array $arr with all elements enclosed between the $prefix and $suffix characters
 */
@@ -79,8 +79,8 @@ function encase($arr, $prefix = '"', $suffix = null) {
 	if ($suffix === null)
 		$suffix = $prefix;
 	$out = array();
-	foreach ($arr as $item)
-		$out[] = $prefix . $item . $suffix;
+	foreach ($arr as $offset => $item)
+		$out[] = strtr($prefix, array('OFFSET' => $offset)) . $item . strtr($suffix, array('OFFSET' => $offset));
 	return $out;
 }
 }
