@@ -31,7 +31,7 @@ if (!function_exists('keyval')) {
 *
 *	$a = keyval('name', 'age', $in); // $a is now array('Earl' => 35, 'John' => 24)
 *
-* @param string $key The key to extract from the array of arrays, 'OFFSET' can also be specified as the indexed offset of the array (i.e. if you need the ID of the array-of-arrays)
+* @param string $key The key to extract from the array of arrays, 'OFFSET' / 'KEY' can also be specified as the indexed offset of the array (i.e. if you need the ID of the array-of-arrays)
 * @param string $val The value to extract from the array of arrays
 * @return array A key/value associative array with the $key and $val extracted
 */
@@ -39,6 +39,7 @@ function keyval($key, $val, $array) {
 	$out = array();
 	foreach ($array as $offset => $item) {
 		$item['OFFSET'] = $offset;
+		$item['KEY'] = $offset;
 		if (isset($item[$key]) && isset($item[$val]))
 			$out[$item[$key]] = $item[$val];
 	}
