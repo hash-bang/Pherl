@@ -7,6 +7,7 @@ It contains a number of convenience functions cheerfully ripped from the Perl pr
 
 * __QW__ - Quick array initalization via simple strings
 * __KEYVAL__ - Extract a key=>val relationship from an array-of-arrays
+* __VALUES__ - Extract a value from a hash array and return it as an indexed array
 * __PICK__ - Randomly pick elements from an array
 * __ENCASE__ - Quickly add a prefix / suffix to an array of strings
 * __EVALSTR__ - Process a string similar to how PHP expands variables
@@ -47,6 +48,26 @@ Quickly reorder arrays by picking the key and value arrangement from an array of
 	$a = keyval('name', 'age', $in); // $a is now array('Earl' => 35, 'John' => 24)
 
 Specifying 'OFFSET' as the key uses the offset of the index within the array-of-arrays.
+
+
+`values` - Extract a key from a hash and return as indexed array
+================================================================
+Quickly reorder arrays by picking the key and value arrangement from an array of arrays
+
+	$in = array(
+		array(
+			'name' => 'Earl',
+			'age' => 35,
+		),
+		array(
+			'name' => 'John',
+			'age' => 24,
+		),
+	);
+	
+	$a = values('name', $in); // $a is now array('Earl', 'John')
+
+`values` is actually just a shortcut function for `keyval(null, $value, $array)`.
 
 
 `pick` - Pick random elements from an array
