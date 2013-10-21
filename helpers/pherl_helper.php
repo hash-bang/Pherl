@@ -31,19 +31,37 @@ if (!function_exists('keyval')) {
 *
 *	$a = keyval('name', 'age', $in); // $a is now array('Earl' => 35, 'John' => 24)
 *
-* @param string $key The key to extract from the array of arrays, 'OFFSET' / 'KEY' can also be specified as the indexed offset of the array (i.e. if you need the ID of the array-of-arrays)
+*	$a = keyval(null, 'age', $in); // $a is now array(35, 24)
+*
+* @param string|null $key The key to extract from the array of arrays, 'OFFSET' / 'KEY' can also be specified as the indexed offset of the array (i.e. if you need the ID of the array-of-arrays). If NULL the returned array is an indexed one of just the value (e.g. array('foo', 'bar', 'baz'))
 * @param string $val The value to extract from the array of arrays
-* @return array A key/value associative array with the $key and $val extracted
+* @return array A key/value associative array (if $key is boolean true) with the $key and $val extracted, if $key is boolean false the array will be an indexed array
 */
 function keyval($key, $val, $array) {
 	$out = array();
 	foreach ($array as $offset => $item) {
-		$item['OFFSET'] = $offset;
-		$item['KEY'] = $offset;
-		if (isset($item[$key]) && isset($item[$val]))
-			$out[$item[$key]] = $item[$val];
+		if (!$key) { // Return indexed array
+			if (isset($item[$val]))
+				$out[] = $item[$val];
+		} else {
+			$item['OFFSET'] = $offset;
+			$item['KEY'] = $offset;
+			if (isset($item[$key]) && isset($item[$val]))
+				$out[$item[$key]] = $item[$val];
+		}
 	}
 	return $out;
+}
+}
+
+if (!function_exists('value')) {
+/**
+* Extract a value from an array and return it as an indexed array
+* This is really just a shortcut function for keyval(null, $val, $array)
+* @see keyval()
+*/
+function value($val, $array) {
+	return keyval(null, $val, $array);
 }
 }
 
