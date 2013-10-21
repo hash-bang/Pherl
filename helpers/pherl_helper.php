@@ -132,7 +132,7 @@ if (!function_exists('re')) {
 * Modifiers (characters that go after the expression):
 * * i - Case insensitive matching
 * * g - Subsitute globally - i.e. dont just replace in an s/// operation once
-* * s - Treat the incomming target as a string. Change "." to match any character (even a newline)
+* * s - Treat the incoming target as a string. Change "." to match any character (even a newline)
 * * m - Treat string as multiple lines. Change "^" and "$" from matching the start or end of the string to matching the start or end of any line anywhere within the string.
 * * 1 - By default RE() will return an array if a capture operation is detected. If this modifier is specified only the first capture result will be returned as a string. This means that you can slurp the match directly into a variable without having to use list()
 *
