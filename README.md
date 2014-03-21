@@ -22,6 +22,12 @@ Download this GIT repository and copy into your application directory.
 
 Alternatively, install with [Composer](http://getcomposer.org).
 
+Since Composer doesn't seem to like just loading files full of helper functions you will need to place:
+
+	include('vendor/hashbang/pherl/lib/pherl.php');
+
+Early in your load order to use the provided Pherl functions.
+
 
 `qw` - Quick array initalizer
 =============================
