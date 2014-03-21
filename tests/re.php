@@ -1,6 +1,6 @@
 #!/usr/bin/php -qC
 <?php
-require(dirname(__FILE__) . '/../helpers/pherl_helper.php');
+require(dirname(__FILE__) . '/../lib/pherl.php');
 // Test cases:
 function testre($title, $expression, $target, $expected) {
 	$result = re($expression, $target, $expected);

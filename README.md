@@ -1,7 +1,6 @@
 Pherl - Perl like functionality for PHP
 =======================================
-
-This Spark module is intended to provide simple Perl like functionality for PHP users.
+This module is intended to provide simple Perl like functionality for PHP users.
 
 It contains a number of convenience functions cheerfully ripped from the Perl programming languages which make coding a lot easier for the terminally impatient.
 
@@ -12,6 +11,16 @@ It contains a number of convenience functions cheerfully ripped from the Perl pr
 * __ENCASE__ - Quickly add a prefix / suffix to an array of strings
 * __EVALSTR__ - Process a string similar to how PHP expands variables
 * __RE__ - Perl like regular expression syntax for PHP
+
+
+Installation
+============
+
+Installing into CodeIgniter / CakePHP etc.
+------------------------------------------
+Download this GIT repository and copy into your application directory.
+
+Alternatively, install with [Composer](http://getcomposer.org).
 
 
 `qw` - Quick array initalizer
